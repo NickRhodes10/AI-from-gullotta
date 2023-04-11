@@ -9,9 +9,24 @@ public class ChaseState : StateBase
 
     public override StateType OnUpdate()
     {
-        if (_myAgent != null)
+        if (_myAgent.GetVisualTarget.GetTargetType == Target.TargetType.Visual)
         {
+            _myAgent.SetCurrentTarget(_myAgent.GetVisualTarget, 1f);
             _myAgent.GetNavAgent.SetDestination(_myAgent.GetCurrentTarget.GetPosition);
+        }
+
+        if (_myAgent.GetHasReachedDestination == true)
+        {
+            if (_myAgent != null && _myAgent.GetVisualTarget.GetTargetType == Target.TargetType.None)
+            {
+                return StateType.Idle;
+            }
+            else if (_myAgent != null && _myAgent.GetVisualTarget.GetTargetType == Target.TargetType.Visual)
+            {
+                return StateType.Attack;
+            }
+
+
         }
 
         return StateType.Chase;

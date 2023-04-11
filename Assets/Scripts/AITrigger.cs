@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(SphereCollider))]
 public class AITrigger : MonoBehaviour
 {
-    private FSMAgent _myAgent;
+    [SerializeField] private FSMAgent _myAgent;
     private SphereCollider _collider;
 
     private void Awake()
@@ -13,9 +13,9 @@ public class AITrigger : MonoBehaviour
         _collider = GetComponent<SphereCollider>();
         _collider.isTrigger = true;
 
-        if (GetComponentInParent<FSMAgent>() != null)
+        if (transform.parent.GetComponentInChildren<FSMAgent>() != null)
         {
-            _myAgent = GetComponentInParent<FSMAgent>();
+            _myAgent = transform.parent.GetComponentInChildren<FSMAgent>();
         }
         else
         {

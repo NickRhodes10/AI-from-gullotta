@@ -4,10 +4,11 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Rigidbody))]
 public class FSMAgent : MonoBehaviour
 {
     //remove later
-    public Transform myTargetObject;
+    public Color lineColour;
 
     [SerializeField, Range(0, 360)] protected float _FOV = 60f;
     [SerializeField] protected AISensor _sensor;
@@ -20,7 +21,7 @@ public class FSMAgent : MonoBehaviour
     protected StateBase _curState;
 
     protected NavMeshAgent _navAgent;
-    protected bool _hasReachedDestination = false;
+    [SerializeField] protected bool _hasReachedDestination = false;
 
     public float GetFOV { get { return _FOV; } }
     public Target GetCurrentTarget { get { return _curTarget; } }
@@ -108,8 +109,8 @@ public class FSMAgent : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
-        //_visualTarget.Clear();
-        //_audioTarget.Clear();
+        _visualTarget.Clear();
+        _audioTarget.Clear();
     }
 
     protected virtual void ChangeState(StateBase.StateType newType)
@@ -178,6 +179,13 @@ public class FSMAgent : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        Gizmos.color = lineColour;
+
+        if (_aiTrigger != null)
+        {
+            Gizmos.DrawLine(transform.position, _aiTrigger.transform.position);
+        }
+
         Color colour = new Color(1f, 0f, 0f, 0.15f);
         UnityEditor.Handles.color = colour;
         Vector3 rotatedForward = Quaternion.Euler(0f, -_FOV * 0.5f, 0f) * transform.forward;
