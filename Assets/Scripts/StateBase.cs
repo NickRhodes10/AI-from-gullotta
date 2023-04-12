@@ -4,6 +4,8 @@ using UnityEngine;
 
 public abstract class StateBase : MonoBehaviour
 {
+    [SerializeField] private float _turnSlerpSpeed = 2.5f;
+
     protected FSMAgent _myAgent;
 
     public abstract StateType GetStateType { get; }
@@ -14,6 +16,18 @@ public abstract class StateBase : MonoBehaviour
     }
 
     public virtual void OnEnter() { }
+
+    public virtual void OnAnimate()
+    {
+        _myAgent.GetNavAgent.updatePosition = true;
+        _myAgent.GetNavAgent.updateRotation = false;
+
+        _myAgent.GetNavAgent.velocity = _myAgent.GetAnimator.deltaPosition / Time.deltaTime;
+
+        Quaternion newRot = Quaternion.LookRotation(_myAgent.GetNavAgent.desiredVelocity);
+
+        transform.rotation = Quaternion.Slerp(transform.rotation, newRot, _turnSlerpSpeed * Time.deltaTime);
+    }
 
     public abstract StateType OnUpdate();
 
@@ -34,7 +48,7 @@ public abstract class StateBase : MonoBehaviour
 
     protected bool IsColliderVisible(Collider other)
     {
-        Vector3 direction = other.transform.position - transform.position;
+        Vector3 direction = other.transform.position - _myAgent.GetSensorPosition;
         float angle = Vector3.Angle(transform.forward, direction);
 
         if(angle > _myAgent.GetFOV * 0.5f)
@@ -59,6 +73,7 @@ public abstract class StateBase : MonoBehaviour
     {
         Idle,
         Chase,
+        Patrol,
         Attack
     }
 }

@@ -31,4 +31,10 @@ public class ChaseState : StateBase
 
         return StateType.Chase;
     }
+
+    public override void OnEnter()
+    {
+        _myAgent.GetNavAgent.isStopped = false;
+        _myAgent.GetAnimator.SetFloat("speed", 2f);
+    }
 }

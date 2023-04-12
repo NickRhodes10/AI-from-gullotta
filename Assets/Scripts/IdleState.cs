@@ -19,4 +19,10 @@ public class IdleState : StateBase
 
         return GetStateType;
     }
+
+    public override void OnEnter()
+    {
+        _myAgent.GetNavAgent.isStopped = true;
+        _myAgent.GetAnimator.SetFloat("speed", 0f);
+    }
 }

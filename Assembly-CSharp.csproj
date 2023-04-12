@@ -65,6 +65,7 @@
     <Compile Include="Assets\Scripts\Target.cs" />
     <Compile Include="Assets\Scripts\TriggerEvents.cs" />
     <Compile Include="Assets\Scripts\StateBase.cs" />
+    <Compile Include="Assets\Scripts\PatrolState.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

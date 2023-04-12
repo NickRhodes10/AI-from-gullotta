@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Rigidbody))]
 public class FSMAgent : MonoBehaviour
@@ -19,7 +20,7 @@ public class FSMAgent : MonoBehaviour
     protected Target _audioTarget = new Target();
     protected Dictionary<StateBase.StateType, StateBase> _allStates = new Dictionary<StateBase.StateType, StateBase>();
     protected StateBase _curState;
-
+    protected Animator _anim;
     protected NavMeshAgent _navAgent;
     [SerializeField] protected bool _hasReachedDestination = false;
 
@@ -29,6 +30,7 @@ public class FSMAgent : MonoBehaviour
     public Target GetAudioTarget { get { return _audioTarget; } }
     public bool GetHasReachedDestination { get { return _hasReachedDestination; } }
     public NavMeshAgent GetNavAgent { get { return _navAgent; } }
+    public Animator GetAnimator { get { return _anim; } }
 
     public Vector3 GetSensorPosition
     {
@@ -68,6 +70,7 @@ public class FSMAgent : MonoBehaviour
     protected virtual void Awake()
     {
         _navAgent = GetComponent<NavMeshAgent>();
+        _anim = GetComponent<Animator>();
 
         if (GetComponentInChildren<AISensor>() != null)
         {
@@ -190,5 +193,15 @@ public class FSMAgent : MonoBehaviour
         UnityEditor.Handles.color = colour;
         Vector3 rotatedForward = Quaternion.Euler(0f, -_FOV * 0.5f, 0f) * transform.forward;
         UnityEditor.Handles.DrawSolidArc(GetSensorPosition, Vector3.up, rotatedForward, _FOV, GetSensorRadius);
+    }
+
+    protected virtual void OnAnimatorMove()
+    {
+        if(_curState == null)
+        {
+            return;
+        }
+
+        _curState.OnAnimate();
     }
 }
