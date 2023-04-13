@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class IdleState : StateBase
 {
+    [SerializeField] private Vector2 _waitTimeRange;
+
+    private float _curWaitTime;
+
     public override StateType GetStateType { get { return StateType.Idle; } }
 
     public override StateType OnUpdate()
@@ -17,12 +21,25 @@ public class IdleState : StateBase
             }
         }
 
+        _curWaitTime -= Time.deltaTime;
+
+        if (_curWaitTime <= 0)
+        {
+            return StateType.Patrol;
+        }
+
         return GetStateType;
+    }
+
+    public override void OnAnimate()
+    {
+        _myAgent.GetNavAgent.updateRotation = false;
     }
 
     public override void OnEnter()
     {
         _myAgent.GetNavAgent.isStopped = true;
         _myAgent.GetAnimator.SetFloat("speed", 0f);
+        _curWaitTime = Random.Range(_waitTimeRange.x, _waitTimeRange.y);
     }
 }

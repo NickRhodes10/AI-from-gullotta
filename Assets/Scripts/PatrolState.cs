@@ -9,13 +9,21 @@ public class PatrolState : StateBase
 
     public override StateType GetStateType { get { return StateType.Patrol; } }
 
+    public override void OnEnter()
+    {
+        _myAgent.SetCurrentTarget(patrolPoints[patrolIndex].position, null, Vector3.Distance(transform.position, patrolPoints[patrolIndex].position), Time.time, Target.TargetType.None);
+        _myAgent.GetNavAgent.SetDestination(_myAgent.GetCurrentTarget.GetPosition);
+
+        _myAgent.GetNavAgent.isStopped = false;
+        _myAgent.GetAnimator.SetFloat("speed", 1f);
+    }
+
     public override StateType OnUpdate()
     {
         if (_myAgent.GetHasReachedDestination == true)
         {
             GoToNextIndex();
-            _myAgent.SetCurrentTarget(patrolPoints[patrolIndex].position, null, Vector3.Distance(transform.position, patrolPoints[patrolIndex].position), Time.time, Target.TargetType.None));
-            _myAgent.GetNavAgent.SetDestination(_myAgent.GetCurrentTarget.GetPosition);
+            return StateType.Idle;
         }
 
         return GetStateType;
@@ -25,7 +33,7 @@ public class PatrolState : StateBase
     {
         patrolIndex++;
 
-        if (patrolIndex >= patrolPoints.Length - 1)
+        if (patrolIndex > patrolPoints.Length - 1)
         {
             patrolIndex = 0;
         }

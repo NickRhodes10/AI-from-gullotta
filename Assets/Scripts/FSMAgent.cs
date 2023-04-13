@@ -32,6 +32,9 @@ public class FSMAgent : MonoBehaviour
     public NavMeshAgent GetNavAgent { get { return _navAgent; } }
     public Animator GetAnimator { get { return _anim; } }
 
+    /// <summary>
+    /// Finds the position of the sensor based on its position relative to all parent objects of the sensor (lossyScale)
+    /// </summary>
     public Vector3 GetSensorPosition
     {
         get
@@ -50,6 +53,10 @@ public class FSMAgent : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Returns the radius of the sensor trigger scaled by all parents (lossyScale) of the sensor
+    /// The radius is equal to the greatest length between x, y, and z.
+    /// </summary>
     public float GetSensorRadius
     {
         get
@@ -67,6 +74,11 @@ public class FSMAgent : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Store local variables of animator and navmeshagent
+    /// Search for a sensor as a child object
+    /// If one is not found, display error message
+    /// </summary>
     protected virtual void Awake()
     {
         _navAgent = GetComponent<NavMeshAgent>();
@@ -82,6 +94,11 @@ public class FSMAgent : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Gather all states
+    /// Add unique states to _allStates dictionary
+    /// Set our state to Idle
+    /// </summary>
     protected virtual void Start()
     {
         StateBase[] foundStates = GetComponents<StateBase>();
@@ -98,6 +115,11 @@ public class FSMAgent : MonoBehaviour
         ChangeState(StateBase.StateType.Idle);
     }
 
+    /// <summary>
+    /// Based on the current state, the agent will preform actions 
+    /// The actions of the state will retun a State to transition to
+    /// Transition to that new state
+    /// </summary>
     protected virtual void Update()
     {
         if (_curState == null)
@@ -105,17 +127,24 @@ public class FSMAgent : MonoBehaviour
             return;
         }
 
-        Debug.Log("Cur State: " + _curState.GetStateType);
-
        ChangeState(_curState.OnUpdate());
     }
 
+    /// <summary>
+    /// Once all physics have been calculated, clear the visual and audio targets in preperation for the next frame.
+    /// </summary>
     protected virtual void FixedUpdate()
     {
         _visualTarget.Clear();
         _audioTarget.Clear();
     }
 
+    /// <summary>
+    /// If the current state is null, set it to idle.
+    /// 
+    /// If the current state is not null, check to see if the new state is not the same as our current state,
+    /// If it is not the same AND allStates contains the new state, exit the old, change to the new state, then enter the new state.
+    /// </summary>
     protected virtual void ChangeState(StateBase.StateType newType)
     {
         if(_curState == null)
@@ -140,6 +169,11 @@ public class FSMAgent : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// If an object has entered or stayed in the sensor trigger,
+    /// Send that data to the curState to evaluate
+    /// For example, if it detects a threat, go to the chase state.
+    /// </summary>
     public void OnSensorEvent(TriggerEventType tet, Collider other)
     {
         if(_curState == null)
@@ -152,7 +186,13 @@ public class FSMAgent : MonoBehaviour
             _curState.OnSensorEvent(other);
         }
     }
-
+    /// <summary>
+    /// Sets current target based on passed in data
+    /// Move AI Trigger to target position
+    /// Set radius of AI Trigger if passed in
+    /// The radius size is helpful to determine range of certain actions such as attacking
+    /// For example, patroling might want a radius of 1, whereas a ranged attack might need a radius of 8.
+    /// </summary>
     public void SetCurrentTarget(Vector3 p, Collider c, float d, float t, Target.TargetType tt)
     {
         _curTarget.Set(p, c, d, t, tt);
@@ -175,6 +215,10 @@ public class FSMAgent : MonoBehaviour
         _aiTrigger.SetRadius(r);
     }
 
+    /// <summary>
+    /// Sets if the agent has reached its destination
+    /// this happens on entering or staying in the AI Trigger
+    /// </summary>
     public void DestinationReached(bool value)
     {
         _hasReachedDestination = value;
@@ -195,6 +239,11 @@ public class FSMAgent : MonoBehaviour
         UnityEditor.Handles.DrawSolidArc(GetSensorPosition, Vector3.up, rotatedForward, _FOV, GetSensorRadius);
     }
 
+    /// <summary>
+    /// Some animations have root motion OnAnimatorMove() calculates the delta position and rotation of the root motion
+    /// Then gives the user control of that data
+    /// Using that data, tell the current state to update based on the passed in delta data
+    /// </summary>
     protected virtual void OnAnimatorMove()
     {
         if(_curState == null)

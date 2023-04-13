@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\AISensor.cs" />
     <Compile Include="Assets\Scripts\ChaseState.cs" />
+    <Compile Include="Assets\Scripts\PatrolState.cs" />
     <Compile Include="Assets\Scripts\AITrigger.cs" />
     <Compile Include="Assets\Scripts\IdleState.cs" />
     <Compile Include="Assets\Scripts\FSMAgent.cs" />
@@ -65,7 +66,6 @@
     <Compile Include="Assets\Scripts\Target.cs" />
     <Compile Include="Assets\Scripts\TriggerEvents.cs" />
     <Compile Include="Assets\Scripts\StateBase.cs" />
-    <Compile Include="Assets\Scripts\PatrolState.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
