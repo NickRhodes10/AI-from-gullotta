@@ -43,10 +43,18 @@ public abstract class StateBase : MonoBehaviour
             return;
         }
 
-        if(IsColliderVisible(other) == true)
+        if(other.transform.tag == "Player")
         {
-            _myAgent.GetVisualTarget.Set(other.transform.position, other, Vector3.Distance(transform.position, other.transform.position), Time.time, Target.TargetType.Visual);
+            if (IsColliderVisible(other) == true)
+            {
+                _myAgent.GetVisualTarget.Set(other.transform.position, other, Vector3.Distance(transform.position, other.transform.position), Time.time, Target.TargetType.Visual);
+            }
         }
+        else if (other.transform.tag == "AudioSource")
+        {
+            _myAgent.GetAudioTarget.Set(other.transform.position, other, Vector3.Distance(transform.position, other.transform.position), Time.time, Target.TargetType.Sound);
+        }
+
     }
 
     /// <summary>

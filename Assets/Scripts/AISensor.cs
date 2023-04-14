@@ -5,8 +5,10 @@ using UnityEngine;
 [RequireComponent(typeof(SphereCollider))]
 public class AISensor : MonoBehaviour
 {
+    // The agent who owns this sensor
     private FSMAgent _myAgent;
 
+    // Set collider to be a trigger, assign the agent, otherwise complain
     private void Awake()
     {
         GetComponent<SphereCollider>().isTrigger = true;
@@ -21,6 +23,9 @@ public class AISensor : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Make sure we have an owner, then let them know there was a sensor event of type Enter and pass in the collider
+    /// </summary>
     private void OnTriggerEnter(Collider other)
     {
         if(_myAgent == null)
@@ -31,6 +36,9 @@ public class AISensor : MonoBehaviour
         _myAgent.OnSensorEvent(TriggerEventType.Enter, other);
     }
 
+    /// <summary>
+    /// Make sure we have an owner, then let them know there was a sensor event of type Stay and pass in the collider
+    /// </summary>
     private void OnTriggerStay(Collider other)
     {
         if (_myAgent == null)
@@ -41,6 +49,9 @@ public class AISensor : MonoBehaviour
         _myAgent.OnSensorEvent(TriggerEventType.Stay, other);
     }
 
+    /// <summary>
+    /// Make sure we have an owner, then let them know there was a sensor event of type Enter and pass in the collider
+    /// </summary>
     private void OnTriggerExit(Collider other)
     {
         if (_myAgent == null)
